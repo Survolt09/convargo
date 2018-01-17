@@ -144,23 +144,46 @@ const actors = [{
   }]
 }];
 
+/*
+function pricing(){
+  deliveries.forEach(delivery => {
+    var tempTruckerID = delivery.truckerId;
+    truckers.forEach(trucker => {
+      if (trucker.id == tempTruckerID){
+        var volume = delivery.volume*trucker.pricePerVolume;
+        var distance = delivery.distance*trucker.pricePerKm;
+        delivery.price = volume+distance;
+      }
+  }); 
+  });
+}*/
+
 
 function pricing(){
   deliveries.forEach(delivery => {
     var tempTruckerID = delivery.truckerId;
-    console.log(tempTruckerID);
     truckers.forEach(trucker => {
       if (trucker.id == tempTruckerID){
-        console.log(trucker.pricePerKm);
-        console.log(trucker.pricePerVolume);
-        var volume = delivery.volume*trucker.pricePerVolume;
         var distance = delivery.distance*trucker.pricePerKm;
-        delivery.price = volume+distance;
-        console.log(delivery.price);
+        console.log(trucker.pricePerVolume*0.9);
+        console.log(trucker.pricePerVolume*0.7);
+        console.log(trucker.pricePerVolume*0.3);
+        var volumePrice = delivery.volume*trucker.pricePerVolume;
+        if((delivery.volume>5) && (delivery.volume<=10)){
+            volumePrice = delivery.volume*trucker.pricePerVolume*0.9;
+            console.log("dans dist >5 et <10");
+
+        }else if ((delivery.volume>10) && (delivery.volume<=25)){
+            volumePrice = delivery.volume*trucker.pricePerVolume*0.7;
+            console.log("dans dist >10 et <25");
+
+        }else if (delivery.volume>25){
+            volumePrice = delivery.volume*trucker.pricePerVolume*0.5;
+            console.log("dans dist >25");
+        }
+        delivery.price = distance + volumePrice;
       }
-    
   }); 
-    
   });
 }
  
