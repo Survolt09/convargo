@@ -144,50 +144,51 @@ const actors = [{
   }]
 }];
 
-/*
-function pricing(){
-  deliveries.forEach(delivery => {
-    var tempTruckerID = delivery.truckerId;
-    truckers.forEach(trucker => {
-      if (trucker.id == tempTruckerID){
-        var volume = delivery.volume*trucker.pricePerVolume;
-        var distance = delivery.distance*trucker.pricePerKm;
-        delivery.price = volume+distance;
-      }
-  }); 
-  });
-}*/
 
 
-function pricing(){
+
+function Pricing(){
   deliveries.forEach(delivery => {
     var tempTruckerID = delivery.truckerId;
     truckers.forEach(trucker => {
       if (trucker.id == tempTruckerID){
         var distance = delivery.distance*trucker.pricePerKm;
-        console.log(trucker.pricePerVolume*0.9);
-        console.log(trucker.pricePerVolume*0.7);
-        console.log(trucker.pricePerVolume*0.3);
         var volumePrice = delivery.volume*trucker.pricePerVolume;
+
         if((delivery.volume>5) && (delivery.volume<=10)){
             volumePrice = delivery.volume*trucker.pricePerVolume*0.9;
-            console.log("dans dist >5 et <10");
 
         }else if ((delivery.volume>10) && (delivery.volume<=25)){
             volumePrice = delivery.volume*trucker.pricePerVolume*0.7;
-            console.log("dans dist >10 et <25");
 
         }else if (delivery.volume>25){
             volumePrice = delivery.volume*trucker.pricePerVolume*0.5;
-            console.log("dans dist >25");
         }
         delivery.price = distance + volumePrice;
       }
   }); 
   });
 }
+
+function Commission(){
+
+    deliveries.forEach(delivery => {
+      
+      var ConvargoGlobalComission = 0.3*delivery.price; 
+      var insuranceComission = 0.5*ConvargoGlobalComission;
+      var treasuryComission = delivery.distance/500;
+      var convargoComission = ConvargoGlobalComission-insuranceComission-treasuryComission;
+
+      delivery.commission.insurance = insuranceComission;
+      delivery.commission.treasury = treasuryComission;
+      delivery.commission.convargo = convargoComission;
+      
+    });
+
+}
  
-pricing(); 
+Pricing(); 
+Commission();
 
 console.log(truckers);
 console.log(deliveries);
