@@ -174,10 +174,10 @@ function Commission(){
 
     deliveries.forEach(delivery => {
       
-      var ConvargoGlobalComission = 0.3*delivery.price; 
-      var insuranceComission = 0.5*ConvargoGlobalComission;
+      var convargoGlobalComission = 0.3*delivery.price; 
+      var insuranceComission = 0.5*convargoGlobalComission;
       var treasuryComission = delivery.distance/500;
-      var convargoComission = ConvargoGlobalComission-insuranceComission-treasuryComission;
+      var convargoComission = convargoGlobalComission-insuranceComission-treasuryComission;
 
       delivery.commission.insurance = insuranceComission;
       delivery.commission.treasury = treasuryComission;
@@ -186,9 +186,27 @@ function Commission(){
     });
 
 }
+
+
+function Deductible (){
+  
+  deliveries.forEach(delivery => {
+
+    if(delivery.options.deductibleReduction == true){
+
+      var newPriceWithDeductibleOption = delivery.price + delivery.volume; //delivery.volume is equal to the additional charge of 1€/m3.
+      delivery.price = newPriceWithDeductibleOption;
+      delivery.commission.convargo += delivery.volume;
+
+    }
+  });
+}
+
+
  
 Pricing(); 
 Commission();
+Deductible();
 
 console.log(truckers);
 console.log(deliveries);
