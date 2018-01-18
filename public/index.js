@@ -156,13 +156,13 @@ function Pricing(){
         var volumePrice = delivery.volume*trucker.pricePerVolume;
 
         if((delivery.volume>5) && (delivery.volume<=10)){
-            volumePrice = delivery.volume*trucker.pricePerVolume*0.9;
+            volumePrice = delivery.volume*trucker.pricePerVolume*0.9; //10% reduction
 
         }else if ((delivery.volume>10) && (delivery.volume<=25)){
-            volumePrice = delivery.volume*trucker.pricePerVolume*0.7;
+            volumePrice = delivery.volume*trucker.pricePerVolume*0.7;//30% reduction
 
         }else if (delivery.volume>25){
-            volumePrice = delivery.volume*trucker.pricePerVolume*0.5;
+            volumePrice = delivery.volume*trucker.pricePerVolume*0.5;//50% reduction
         }
         delivery.price = distance + volumePrice;
       }
@@ -173,7 +173,7 @@ function Pricing(){
 function Commission(){
 
     deliveries.forEach(delivery => {
-      
+      //calculate the different commissions
       var convargoGlobalComission = 0.3*delivery.price; 
       var insuranceComission = 0.5*convargoGlobalComission;
       var treasuryComission = delivery.distance/500;
@@ -202,11 +202,41 @@ function Deductible (){
   });
 }
 
+function PayActors(){
+  deliveries.forEach(delivery => {
+    var tempDeliveryID = delivery.id;
+    actors.forEach(actor => {
+      if(actor.deliveryId == tempDeliveryID){
+        actor.payment.forEach(itemPayment => {
+          if(itemPayment.who == "shipper" ){
+            itemPayment.amount = delivery.price;
+          }
+          else if(itemPayment.who == "trucker"){
+            var globalCommission = delivery.commission.convargo + //calculate the globalComission without deductible option
+                               delivery.commission.insurance+
+                               delivery.commission.treasury;
+            itemPayment.amount = delivery.price - globalCommission;
+          }
+          else if(itemPayment.who == "treasury"){
+            itemPayment.amount = delivery.commission.treasury;
+          }
+          else if(itemPayment.who == "insurance"){
+            itemPayment.amout = delivery.commission.insurance;
+          }
+          else if(itemPayment.who == "convargo"){
+            itemPayment.amount = delivery.commission.convargo;
 
+          }
+        });
+      } 
+    });
+  });
+}
  
 Pricing(); 
 Commission();
 Deductible();
+PayActors();
 
 console.log(truckers);
 console.log(deliveries);
